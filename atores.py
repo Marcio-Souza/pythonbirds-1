@@ -40,6 +40,10 @@ class Ator():
         """
         return 1, 1
 
+    def dentro_do_intervalo(self, posicao1, posicao2, intervalo):
+        distancia = abs(posicao1 - posicao2)
+        return distancia <= intervalo
+
     def colidir(self, outro_ator, intervalo=1):
         """
         Método que executa lógica de colisão entre dois atores.
@@ -52,16 +56,22 @@ class Ator():
         :param intervalo: Intervalo a ser considerado
         :return:
         """
-        pass
+        if self.status == DESTRUIDO or outro_ator.status == DESTRUIDO:
+            return
+        colidiu_na_horizontal = self.dentro_do_intervalo(self.x, outro_ator.x, intervalo)
+        colidiu_na_vertical = self.dentro_do_intervalo(self.y, outro_ator.y, intervalo)
 
+        if colidiu_na_horizontal and colidiu_na_vertical:
+            self.status == DESTRUIDO
+            outro_ator == DESTRUIDO
 
 
 class Obstaculo(Ator):
-    pass
+    _caracter_ativo = 'O'
 
 
 class Porco(Ator):
-    pass
+    _caracter_ativo = '@'
 
 
 class DuploLancamentoExcecao(Exception):
@@ -93,7 +103,7 @@ class Passaro(Ator):
 
         :return: booleano
         """
-        return True
+        return not self._tempo_de_lancamento is None
 
     def colidir_com_chao(self):
         """
@@ -102,6 +112,11 @@ class Passaro(Ator):
 
         """
         pass
+
+    def calcular_posicao_horizontal(self, delta_t):
+        x = self._x_inicial
+        x += self.velocidade_escalar * delta_t * math.cos(self._angulo_de_lancamento)
+        return x
 
     def calcular_posicao(self, tempo):
         """
@@ -117,8 +132,10 @@ class Passaro(Ator):
         :param tempo: tempo de jogo a ser calculada a posição
         :return: posição x, y
         """
-        return 1, 1
-
+        if self.foi_lancado() and self.status == ATIVO:
+            delta_t = tempo - self._tempo_de_lancamento
+            self.x = self.calcular_posicao_horizontal(delta_t)
+        return self.x, self.y
 
     def lancar(self, angulo, tempo_de_lancamento):
         """
@@ -129,7 +146,9 @@ class Passaro(Ator):
         :param tempo_de_lancamento:
         :return:
         """
-        pass
+        angulo_em_radianos = math.radians(angulo)
+        self._tempo_de_lancamento = tempo_de_lancamento
+        self._angulo_de_lancamento = angulo_em_radianos
 
 
 class PassaroAmarelo(Passaro):
@@ -137,4 +156,4 @@ class PassaroAmarelo(Passaro):
 
 
 class PassaroVermelho(Passaro):
-    pass
+    _caracter_ativo = 'V'
