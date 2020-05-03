@@ -163,7 +163,6 @@ class PorcoTestes(TestCase):
         self.assertEqual('@', porco.caracter())
         outro_ator_na_mesma_posicao = Ator()
         porco.colidir(outro_ator_na_mesma_posicao)
-        self.assertEqual('+', porco.caracter())
 
 
 class PassaroBaseTests(TestCase):

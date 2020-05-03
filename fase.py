@@ -31,6 +31,7 @@ class Fase():
 
         :param intervalo_de_colisao:
         """
+        self._possui_porcos_ativos = None
         self.intervalo_de_colisao = intervalo_de_colisao
         self._passaros = []
         self._porcos = []
@@ -61,6 +62,7 @@ class Fase():
         """
         self._passaros.extend(passaros)
 
+    @property
     def status(self):
         """
         Método que indica com mensagem o status do jogo
@@ -73,7 +75,12 @@ class Fase():
 
         :return:
         """
-        return EM_ANDAMENTO
+        if not self._tem_porcos_ativos():
+            return VITORIA 
+        elif self._tem_passaros_ativos():
+            return EM_ANDAMENTO
+        else:
+            return DERROTA
 
     def lancar(self, angulo, tempo):
         """
@@ -105,7 +112,7 @@ class Fase():
             passaro.calcular_posicao(tempo)
             for obstaculo_ou_porco in self._passaros + self._porcos:
                 passaro.colidir(obstaculo_ou_porco, self.intervalo_de_colisao)
-
+            passaro.colidir_com_chao()
         pontos=[self._transformar_em_ponto(a) for a in self._passaros+self._obstaculos+self._porcos]
 
         return pontos
@@ -113,3 +120,14 @@ class Fase():
     def _transformar_em_ponto(self, ator):
         return Ponto(ator.x, ator.y, ator.caracter())
 
+    def _tem_porcos_ativos(self):
+        for porco in self._porcos:
+            if porco.status == ATIVO:
+                return True
+        return False
+
+    def _tem_passaros_ativos(self):
+        for passaro in self._passaros:
+            if passaro.status == ATIVO:
+                return True
+        return False

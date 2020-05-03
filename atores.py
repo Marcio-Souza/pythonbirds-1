@@ -9,7 +9,7 @@ ATIVO = 'Ativo'
 GRAVIDADE = 10  # m/s^2
 
 
-class Ator():
+class Ator:
     """
     Classe que representa um ator. Ele representa um ponto cartesiano na tela.
     """
@@ -38,11 +38,7 @@ class Ator():
         :param tempo: o tempo do jogo
         :return: posição x, y do ator
         """
-        return 1, 1
-
-    def dentro_do_intervalo(self, posicao1, posicao2, intervalo):
-        distancia = abs(posicao1 - posicao2)
-        return distancia <= intervalo
+        return self.x, self.y
 
     def colidir(self, outro_ator, intervalo=1):
         """
@@ -56,14 +52,11 @@ class Ator():
         :param intervalo: Intervalo a ser considerado
         :return:
         """
-        if self.status == DESTRUIDO or outro_ator.status == DESTRUIDO:
-            return
-        colidiu_na_horizontal = self.dentro_do_intervalo(self.x, outro_ator.x, intervalo)
-        colidiu_na_vertical = self.dentro_do_intervalo(self.y, outro_ator.y, intervalo)
-
-        if colidiu_na_horizontal and colidiu_na_vertical:
-            self.status == DESTRUIDO
-            outro_ator == DESTRUIDO
+        if self.status == ATIVO and outro_ator.status == ATIVO:
+            delta_x = abs(self.x - outro_ator.x)
+            delta_y = abs(self.y - outro_ator.y)
+            if delta_x <= intervalo and delta_y <= intervalo:
+                self.status = outro_ator.status = DESTRUIDO
 
 
 class Obstaculo(Ator):
@@ -72,6 +65,7 @@ class Obstaculo(Ator):
 
 class Porco(Ator):
     _caracter_ativo = '@'
+    _caracter_destruido = '+'
 
 
 class DuploLancamentoExcecao(Exception):
@@ -111,7 +105,8 @@ class Passaro(Ator):
         o status dos Passaro deve ser alterado para destruido, bem como o seu caracter
 
         """
-        pass
+        if self.y <= 0:
+            self.status = DESTRUIDO
 
     def calcular_posicao_horizontal(self, delta_t):
         x = self._x_inicial
@@ -152,8 +147,11 @@ class Passaro(Ator):
 
 
 class PassaroAmarelo(Passaro):
-    pass
+    _caracter_destruido = 'a'
+    velocidade_escalar = 30
 
 
 class PassaroVermelho(Passaro):
     _caracter_ativo = 'V'
+    _caracter_destruido = 'v'
+    velocidade_escalar = 20
