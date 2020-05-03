@@ -76,11 +76,11 @@ class Fase():
         :return:
         """
         if not self._tem_porcos_ativos():
-            return VITORIA 
-        elif self._tem_passaros_ativos():
-            return EM_ANDAMENTO
-        else:
+            return VITORIA
+        elif not self._tem_passaros_ativos():
             return DERROTA
+        else:
+            return EM_ANDAMENTO
 
     def lancar(self, angulo, tempo):
         """
@@ -98,7 +98,6 @@ class Fase():
                 passaro.lancar(angulo, tempo)
                 break
 
-
     def calcular_pontos(self, tempo):
         """
         Lógica que retorna os pontos a serem exibidos na tela.
@@ -110,10 +109,10 @@ class Fase():
         """
         for passaro in self._passaros:
             passaro.calcular_posicao(tempo)
-            for obstaculo_ou_porco in self._passaros + self._porcos:
+            for obstaculo_ou_porco in self._obstaculos + self._porcos:
                 passaro.colidir(obstaculo_ou_porco, self.intervalo_de_colisao)
             passaro.colidir_com_chao()
-        pontos=[self._transformar_em_ponto(a) for a in self._passaros+self._obstaculos+self._porcos]
+        pontos = [self._transformar_em_ponto(a) for a in self._passaros+self._obstaculos+self._porcos]
 
         return pontos
 
